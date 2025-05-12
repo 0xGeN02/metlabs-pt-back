@@ -4,7 +4,7 @@ import cors from "cors";
 import { toNodeHandler, fromNodeHeaders  } from "better-auth/node";
 import { auth } from "../lib/auth";
 import { POST as registerHandler } from "../api/auth/register/route";
-
+import { POST as loginHandler } from "../api/auth/login/route";
 const app = express();
 const port = process.env.PORT || 3010;
 
@@ -24,6 +24,10 @@ app.use(express.json());
 // Registration endpoint
 app.post('/api/auth/register', (req: Request, res: Response) => {
   registerHandler(req, res);
+});
+
+app.post('/api/auth/login', (req: Request, res: Response) => {
+  loginHandler(req, res);
 });
 
 // Mount Better Auth handler for all auth routes
