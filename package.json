@@ -1,0 +1,40 @@
+{
+  "name": "metlabs-pt-back",
+  "version": "1.0.0",
+  "description": "Metlabs-pt backend",
+  "homepage": "https://github.com/0xGeN02/metlabs-pt-back#readme",
+  "bugs": {
+    "url": "https://github.com/0xGeN02/metlabs-pt-back/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xGeN02/metlabs-pt-back.git"
+  },
+  "license": "MIT",
+  "author": "0xGeN02",
+  "type": "commonjs",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts --port 3010",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "better-auth": "^1.2.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "next-zod-route": "^0.2.5",
+    "prisma": "^6.7.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17"
+  }
+}

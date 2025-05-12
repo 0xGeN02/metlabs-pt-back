@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+  output = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Sex {
+    male
+    female
+}
+
+model User {
+    id     String @id @default(cuid())
+    name   String
+    email  String @unique
+    password String
+    phone String
+    sex Sex? 
+    birth_nation String? 
+    birth_locality String? 
+    nationality String 
+    birth_date DateTime @db.Date
+    walletId String? @unique
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    deleted_at DateTime? @db.Date
+
+    wallet Wallet?
+}
+
+model Wallet {
+    private_key String @id @default(cuid())
+    public_key String @unique
+    balance Float @default(0)
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    deleted_at DateTime? @db.Date
+
+    user User? @relation(fields: [private_key], references: [walletId])
+}
