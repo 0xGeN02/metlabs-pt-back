@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import prisma from "../../../prisma/generated/client";
+import { PrismaClient } from "../../../prisma/generated/client";
 import bcrypt from 'bcrypt';
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
 
+const prisma = new PrismaClient();
 // Esquema de validación
 const loginSchema = z.object({
   email: z.string().email("Correo electrónico inválido"),
