@@ -1,7 +1,7 @@
 // filepath: /home/xgen0/metlabs-pt/metlabs-pt-back/server.ts
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
+import { toNodeHandler  } from "better-auth/node";
 import { auth } from "../lib/auth";
 
 const app = express();
@@ -24,20 +24,17 @@ app.all("/api/auth/*splat", toNodeHandler(auth)); // For ExpressJS v5
 // Only for routes that don't interact with Better Auth
 app.use(express.json());
 
-// Example protected route to get user session
-app.get("/api/test/session", async (req: Request, res: Response): Promise<void> => {
-  try {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
-    });
-    
-    if (!session.user)
-      res.status(401).json({ error: "Not authenticated" });
-    
-    res.json(session);
-  } catch (error){ 
-        res.status(500).json({ error: "Internal server error" });
-    }
+// Example route
+app.get("/api/hello", (req: Request, res: Response) => {
+  res.json({ message: "Hello from the server!" });
+});
+
+// Import the register route handler
+import { POST as registerHandler } from "../api/auth/register/route";
+
+// Registration endpoint
+app.post("/api/auth/register", (req: Request, res: Response) => {
+  registerHandler(req, res);
 });
 
 app.listen(port, () => {
