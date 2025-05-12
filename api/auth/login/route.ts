@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { z } from "zod";
+import prisma from "../../../prisma/generated/client";
+import bcrypt from 'bcrypt';
+import { sign, Secret, SignOptions } from 'jsonwebtoken';
 
 // Esquema de validación
 const loginSchema = z.object({
@@ -27,13 +30,43 @@ export async function POST(req: Request, res: Response) {
 
     const { email, password } = validation.data;
 
+    // Buscar el usuario en la base de datos
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      return res.status(401).json({
+        error: "Usuario o contraseña incorrectos",
+      });
+    }
 
+    // Verificar la contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        error: "Contraseña incorrecta",
+      });
+    }
+    //  Generar un token JWT y enviarlo al cliente
+    const jwtSecret = process.env.JWT_SECRET as Secret;
+    const jwtExpiration = process.env.JWT_EXPIRATION as SignOptions['expiresIn'] || '1h';
 
-    // Puedes devolver el usuario, token, etc. según tu flujo
+    if (!jwtSecret) {
+    return res.status(500).json({
+        error: 'Error interno del servidor: JWT_SECRET no está definido'
+    });
+    }
+
+    const payload = { userId: user.id, email: user.email };
+    const options: SignOptions = { expiresIn: jwtExpiration };
+
+    const token = sign(payload, jwtSecret, options);
+    
     return res.status(200).json({
       message: "Inicio de sesión exitoso",
         user: {
             email,
+            token
         },
     });
   } catch (error) {

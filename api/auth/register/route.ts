@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import { PrismaClient } from "../../../prisma/generated/client";
 import bcrypt from "bcrypt";
-import { signInEmail } from "better-auth/api";
+import { sign, Secret, SignOptions } from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
@@ -72,12 +72,30 @@ export async function POST(req: Request, res: Response) {
       }
     });
 
+    // Generar un token JWT y enviarlo al cliente
+    const jwtSecret = process.env.JWT_SECRET as Secret;
+    const jwtExpiration = process.env.JWT_EXPIRATION as SignOptions['expiresIn'] || '1h';
+
+    if (!jwtSecret) {
+      return res.status(500).json({
+        error: 'Error interno del servidor: JWT_SECRET no está definido'
+      });
+    }
+
+    const payload = { userId: newUser.id, email: newUser.email };
+    const options: SignOptions = { expiresIn: jwtExpiration };
+
+    const token = sign(payload, jwtSecret, options);
+
     // Excluir la contraseña de la respuesta
     const { password: _, ...userWithoutPassword } = newUser;
 
     return res.status(201).json({
       message: "Usuario registrado exitosamente",
-      user: userWithoutPassword
+      user: {
+        ...userWithoutPassword,
+        token
+      }
     });
     
   } catch (error) {
