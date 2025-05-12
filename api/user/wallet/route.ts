@@ -18,6 +18,12 @@ export async function POST(req: Request, res: Response) {
 
       if (!userId || !address) return res.status(400).json({ error: "Datos faltantes" });
 
+      // Actualiza el usuario con el walletId antes de crear la wallet
+      await prisma.user.update({
+        where: { id: userId },
+        data: { walletId: address },
+      });
+
       // Crea la wallet si no existe
       await prisma.wallet.upsert({
         where: { public_key: address },
@@ -25,15 +31,8 @@ export async function POST(req: Request, res: Response) {
         create: { public_key: address },
       });
 
-      // Asocia la wallet al usuario
-      await prisma.user.update({
-        where: { id: userId },
-        data: { walletId: address },
-      });
-
       res.status(200).json({ ok: true });
     } catch (err) {
-      console.error("JWT verification error:", err);
       return res.status(401).json({ error: "Token inválido o malformado" });
     }
   } catch (err) {

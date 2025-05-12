@@ -36,9 +36,7 @@ app.post('/api/user/wallet', (req: Request, res: Response) => {
   walletHandler(req, res);
 });
 
-// Mount Better Auth handler for all auth routes
-// Important: Place this BEFORE express.json() middleware
-app.all('/api/auth/{*any}', toNodeHandler(auth)); // For ExpressJS v5
+app.all('/api/auth/{*any}', toNodeHandler(auth));
 
 
 // Example route

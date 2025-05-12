@@ -20,9 +20,10 @@ export const auth = betterAuth({
   // Google OAuth
   socialProviders: {
     google: {
+      prompt: "select_account+consent",
       clientId:     process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirectUri: `${process.env.NEXT_APP_URL}/api/auth/sign-in/social`,
+      redirectUri: `${process.env.NEXT_APP_URL}/api/auth/callback/google`,
     },
   },
 
