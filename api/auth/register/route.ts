@@ -72,14 +72,6 @@ export async function POST(req: Request, res: Response) {
       }
     });
 
-    // Iniciar sesión automáticamente al usuario después del registro
-    await signInEmail({
-      body: {
-        email,
-        password
-      }
-    })
-
     // Excluir la contraseña de la respuesta
     const { password: _, ...userWithoutPassword } = newUser;
 
