@@ -11,26 +11,31 @@ export async function POST(req: Request, res: Response) {
 
     if (!token) return res.status(401).json({ error: "No autenticado" });
 
-    // Decodifica el JWT para obtener el userId
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    const userId = decoded?.userId;
+    try {
+      // Decodifica el JWT para obtener el userId
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+      const userId = decoded?.userId;
 
-    if (!userId || !address) return res.status(400).json({ error: "Datos faltantes" });
+      if (!userId || !address) return res.status(400).json({ error: "Datos faltantes" });
 
-    // Crea la wallet si no existe
-    await prisma.wallet.upsert({
-      where: { public_key: address },
-      update: {},
-      create: { public_key: address },
-    });
+      // Crea la wallet si no existe
+      await prisma.wallet.upsert({
+        where: { public_key: address },
+        update: {},
+        create: { public_key: address },
+      });
 
-    // Asocia la wallet al usuario
-    await prisma.user.update({
-      where: { id: userId },
-      data: { walletId: address },
-    });
+      // Asocia la wallet al usuario
+      await prisma.user.update({
+        where: { id: userId },
+        data: { walletId: address },
+      });
 
-    res.status(200).json({ ok: true });
+      res.status(200).json({ ok: true });
+    } catch (err) {
+      console.error("JWT verification error:", err);
+      return res.status(401).json({ error: "Token inválido o malformado" });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error interno del servidor" });

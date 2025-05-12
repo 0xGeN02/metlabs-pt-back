@@ -5,6 +5,7 @@ import { toNodeHandler, fromNodeHeaders  } from "better-auth/node";
 import { auth } from "../lib/auth";
 import { POST as registerHandler } from "../api/auth/register/route";
 import { POST as loginHandler } from "../api/auth/login/route";
+import { POST as walletHandler } from "../api/user/wallet/route";
 const app = express();
 const port = process.env.PORT || 3010;
 
@@ -28,6 +29,11 @@ app.post('/api/auth/register', (req: Request, res: Response) => {
 
 app.post('/api/auth/sign-in/email', (req: Request, res: Response) => {
   loginHandler(req, res);
+});
+
+// Register the wallet route
+app.post('/api/user/wallet', (req: Request, res: Response) => {
+  walletHandler(req, res);
 });
 
 // Mount Better Auth handler for all auth routes
