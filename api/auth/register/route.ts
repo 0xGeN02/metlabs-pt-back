@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import { PrismaClient } from "../../../prisma/generated/client";
 import bcrypt from "bcrypt";
+import { signInEmail } from "better-auth/api";
 
 const prisma = new PrismaClient();
 
@@ -70,6 +71,14 @@ export async function POST(req: Request, res: Response) {
         birth_date,
       }
     });
+
+    // Iniciar sesión automáticamente al usuario después del registro
+    await signInEmail({
+      body: {
+        email,
+        password
+      }
+    })
 
     // Excluir la contraseña de la respuesta
     const { password: _, ...userWithoutPassword } = newUser;

@@ -22,7 +22,13 @@ export const auth = betterAuth({
     google: {
       clientId:     process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirectUri: `${process.env.FRONTEND_URL}/profile`
+      redirectUri: `${process.env.NEXT_APP_URL}/api/auth/sign-in/social`,
     },
   },
+
+  // trusted origins
+  trustedOrigins: [
+    process.env.NEXT_APP_URL!,
+    process.env.NEXT_PUBLIC_API_URL!,
+  ],
 });
