@@ -30,7 +30,7 @@ app.get("/api/hello", (req: Request, res: Response) => {
 });
 
 // Import the register route handler
-import { POST as registerHandler } from "../api/auth/register/route";
+import { POST as registerHandler } from "./api/auth/register/route";
 
 // Registration endpoint
 app.post("/api/auth/register", (req: Request, res: Response) => {

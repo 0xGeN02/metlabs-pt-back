@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { PrismaClient } from "../../../prisma/generated/client";
+import { PrismaClient } from "../../../../prisma/generated/client";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
@@ -18,6 +18,7 @@ const registerSchema = z.object({
     ),
     phone: z.coerce.string().min(9, "El teléfono es obligatorio"),
     nationality: z.coerce.string().min(2, "La nacionalidad es obligatoria"),
+    sex: z.enum(["male", "female"], { required_error: "El sexo es obligatorio" }),
     birth_date: z.coerce.date().refine((date) => {
       const today = new Date();
       const age = today.getFullYear() - date.getFullYear();
@@ -40,7 +41,7 @@ export async function POST(req: Request, res: Response) {
       });
     }
 
-    const { name, email, password , phone, nationality, birth_date} = validationResult.data;
+    const { name, email, password , phone, nationality, sex, birth_date} = validationResult.data;
 
     // Verificar si el usuario ya existe
     const existingUser = await prisma.user.findUnique({
@@ -65,6 +66,7 @@ export async function POST(req: Request, res: Response) {
         password: hashedPassword,
         phone,
         nationality,
+        sex,
         birth_date,
       }
     });

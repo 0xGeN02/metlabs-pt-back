@@ -15,17 +15,15 @@ enum Sex {
 }
 
 model User {
-    id     String @id @default(cuid())
-    name   String
-    email  String @unique
-    password String
-    phone String
-    sex Sex? 
-    birth_nation String? 
-    birth_locality String? 
-    nationality String 
-    birth_date DateTime @db.Date
-    walletId String? @unique
+    id           String @id @default(cuid())
+    name         String
+    email        String @unique
+    password     String
+    phone        String
+    sex Sex 
+    nationality  String 
+    birth_date   DateTime @db.Date
+    walletId     String? @unique
 
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
@@ -36,8 +34,8 @@ model User {
 
 model Wallet {
     private_key String @id @default(cuid())
-    public_key String @unique
-    balance Float @default(0)
+    public_key  String @unique
+    balance     Float  @default(0)
 
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
