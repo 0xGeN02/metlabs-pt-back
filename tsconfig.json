@@ -1,6 +1,14 @@
 {
   "compilerOptions": {
-    "types": ["node"]
-    // ... otras opciones
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@lib/*": ["lib/*"],
+      "@tests/*": ["tests/*"]
+    },
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
   }
 }
