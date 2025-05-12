@@ -17,6 +17,10 @@ app.use(
   })
 );
 
+// Mount express.json middleware AFTER Better Auth handler
+// Only for routes that don't interact with Better Auth
+app.use(express.json());
+
 // Registration endpoint
 app.post('/api/auth/register', (req: Request, res: Response) => {
   registerHandler(req, res);
@@ -26,9 +30,6 @@ app.post('/api/auth/register', (req: Request, res: Response) => {
 // Important: Place this BEFORE express.json() middleware
 app.all('/api/auth/{*any}', toNodeHandler(auth)); // For ExpressJS v5
 
-// Mount express.json middleware AFTER Better Auth handler
-// Only for routes that don't interact with Better Auth
-app.use(express.json());
 
 // Example route
 app.get('/api/hello', (req: Request, res: Response) => {
