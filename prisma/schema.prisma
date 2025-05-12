@@ -23,6 +23,7 @@ model User {
     sex          Sex 
     nationality  String 
     birth_date   DateTime @db.Date
+    jwt          String? @unique
     walletId     String? @unique
 
     created_at DateTime @default(now())

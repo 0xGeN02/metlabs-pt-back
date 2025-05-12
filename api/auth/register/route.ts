@@ -87,6 +87,16 @@ export async function POST(req: Request, res: Response) {
 
     const token = sign(payload, jwtSecret, options);
 
+    try {
+      await prisma.user.update({
+        where: { id: newUser.id },
+        data: { jwt: token },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: "Error al actualizar el token en la base de datos",
+      });
+    }
     // Excluir la contraseña de la respuesta
     const { password: _, ...userWithoutPassword } = newUser;
 

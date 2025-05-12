@@ -3,6 +3,7 @@ import { z } from "zod";
 import { PrismaClient } from "../../../prisma/generated/client";
 import bcrypt from 'bcrypt';
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 // Esquema de validación
@@ -62,7 +63,17 @@ export async function POST(req: Request, res: Response) {
     const options: SignOptions = { expiresIn: jwtExpiration };
 
     const token = sign(payload, jwtSecret, options);
-    
+
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { jwt: token },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: "Error al actualizar el token en la base de datos",
+      });
+    }
     return res.status(200).json({
       message: "Inicio de sesión exitoso",
         user: {
