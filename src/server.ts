@@ -26,7 +26,7 @@ app.post('/api/auth/register', (req: Request, res: Response) => {
   registerHandler(req, res);
 });
 
-app.post('/api/auth/login', (req: Request, res: Response) => {
+app.post('/api/auth/sign-in/email', (req: Request, res: Response) => {
   loginHandler(req, res);
 });
 

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { signInEmail } from "better-auth/api";
 
 // Esquema de validación
 const loginSchema = z.object({
