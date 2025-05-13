@@ -6,9 +6,9 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 // Define el esquema de validación para req.body
-const walletSchema = z.object({
+const reqSchema = z.object({
   address: z.string().nonempty("La dirección es requerida"),
-  balance: z.number().optional(),
+  userId: z.string().nonempty("El ID de usuario es requerido"),
 });
 
 // Define el esquema para la respuesta de POST
@@ -19,7 +19,6 @@ const postResponseSchema = z.object({
 // Define el esquema para la respuesta de GET
 const getResponseSchema = z.object({
   public_key: z.string(),
-  balance: z.number(),
   user: z.object({
     id: z.string(),
     name: z.string(),
@@ -30,7 +29,7 @@ const getResponseSchema = z.object({
 export async function POST(req: Request, res: Response) {
   try {
     // Valida el cuerpo de la solicitud
-    const parsedBody = walletSchema.safeParse(req.body);
+    const parsedBody = reqSchema.safeParse(req.body);
 
     if (!parsedBody.success) {
       return res.status(400).json({
@@ -39,15 +38,15 @@ export async function POST(req: Request, res: Response) {
       });
     }
 
-    const { address, balance } = parsedBody.data;
-    const token = req.cookies?.auth_token || req.headers.authorization?.split(" ")[1];
-
-    if (!token) return res.status(401).json({ error: "No autenticado" });
+    const { address, userId } = parsedBody.data;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) return res.status(401).json({ error: "No autenticado" });
 
     try {
-      // Decodifica el JWT para obtener el userId
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-      const userId = decoded?.userId;
+      const userId = user?.id;
+      if (!userId) return res.status(401).json({ error: "No autenticado." });
 
       if (!userId || !address) return res.status(400).json({ error: "Datos faltantes" });
 
@@ -61,14 +60,13 @@ export async function POST(req: Request, res: Response) {
       await prisma.wallet.create({
         data: {
           public_key: address,
-          balance: balance || undefined,
           userId: userId,
         }
       });
 
       res.status(201).json(postResponseSchema.parse({ ok: true }));
     } catch (err) {
-      return res.status(401).json({ error: "Token inválido o malformado" });
+      return res.status(401).json({ error: "Error in request" });
     }
   } catch (err) {
     console.error(err);
@@ -78,14 +76,24 @@ export async function POST(req: Request, res: Response) {
 
 export async function GET(req: Request, res: Response) {
   try {
-    const token = req.cookies?.auth_token || req.headers.authorization?.split(" ")[1];
-
-    if (!token) return res.status(401).json({ error: "No autenticado" });
+    // Obtenemos el jwt del request
+    const parseBody = reqSchema.safeParse(req.body);
+    if (!parseBody.success) {
+      return res.status(400).json({
+        error: "Datos inválidos",
+        details: parseBody.error.errors,
+      });
+    }
+    const { userId } = parseBody.data;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) return res.status(401).json({ error: "No autenticado" });
 
     try {
-      // Decodifica el JWT para obtener el userId
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-      const userId = decoded?.userId;
+
+      const userId = user?.id;
+      if (!userId) return res.status(401).json({ error: "No autenticado." });
 
       if (!userId) return res.status(400).json({ error: "Usuario no encontrado" });
 

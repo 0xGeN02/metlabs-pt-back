@@ -3,6 +3,7 @@ import { z } from "zod";
 import { PrismaClient } from "@prismadb/generated/client";
 import bcrypt from 'bcrypt';
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
+import { id } from "ethers";
 
 const prisma = new PrismaClient();
 const loginSchema = z.object({
@@ -22,7 +23,7 @@ const responseSchema = z.object({
   success: z.boolean(),
   user: z.object({
     email: z.string().email(),
-    token: z.string(),
+    id: z.string(),
   }),
 });
 
@@ -103,7 +104,7 @@ export async function POST(req: Request, res: Response) {
       success: true,
       user: {
         email,
-        token,
+        id: user.id,
       },
     };
 

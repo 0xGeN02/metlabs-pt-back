@@ -10,8 +10,8 @@ import { POST as depositHandler } from "@api/wallet/deposit/route";
 import { GET as userHandler } from "@api/user/[id]/route";
 import { GET as jwtHandler } from "@api/user/jwt/route";
 const app = express();
-const port = process.env.PORT || 3010;
-const appURL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const port = process.env.PORT || 3000;
+const appURL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002';
 
 // Configure CORS first
 app.use(
