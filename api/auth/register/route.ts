@@ -6,7 +6,7 @@ import { sign, Secret, SignOptions } from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
-// Esquema de validación que coincide con el del frontend
+// Actualizar el esquema de validación para que coincida con el frontend
 const registerSchema = z.object({
   name: z.string().min(2, "El nombre es obligatorio"),
   email: z.string().email("Correo electrónico inválido"),
@@ -17,15 +17,34 @@ const registerSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/,
       "La contraseña debe contener mayúscula, minúscula, número y un caracter especial"
     ),
-    phone: z.coerce.string().min(9, "El teléfono es obligatorio"),
-    nationality: z.coerce.string().min(2, "La nacionalidad es obligatoria"),
+  confirmPassword: z.string(),
+  phone: z.coerce.string().min(9, "El teléfono es obligatorio"),
+  nationality: z.coerce.string().min(2, "La nacionalidad es obligatoria"),
+  sex: z.enum(["male", "female"], { required_error: "El sexo es obligatorio" }),
+  birth_date: z.string().refine((date) => {
+    const d = new Date(date);
+    const today = new Date();
+    const age = today.getFullYear() - d.getFullYear();
+    return !isNaN(d.getTime()) && age >= 18;
+  }, "Debes tener al menos 18 años para registrarte"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Las contraseñas no coinciden",
+  path: ["confirmPassword"],
+});
+
+// Define el esquema para la respuesta
+const responseSchema = z.object({
+  message: z.string(),
+  user: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string().email(),
+    phone: z.string(),
+    nationality: z.string(),
     sex: z.enum(["male", "female"], { required_error: "El sexo es obligatorio" }),
-    birth_date: z.coerce.date().refine((date) => {
-      const today = new Date();
-      const age = today.getFullYear() - date.getFullYear();
-      return age >= 18;
-    }
-    , "Debes tener al menos 18 años para registrarte"),
+    birth_date: z.string(),
+    token: z.string(),
+  }),
 });
 
 export async function POST(req: Request, res: Response) {
@@ -100,13 +119,22 @@ export async function POST(req: Request, res: Response) {
     // Excluir la contraseña de la respuesta
     const { password: _, ...userWithoutPassword } = newUser;
 
-    return res.status(201).json({
+    const response = {
       message: "Usuario registrado exitosamente",
       user: {
         ...userWithoutPassword,
-        token
-      }
-    });
+        token,
+      },
+    };
+
+    const parsedResponse = responseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      console.error("Formato de respuesta inválido:", parsedResponse.error);
+      return res.status(500).json({ error: "Formato de respuesta inválido" });
+    }
+
+    return res.status(201).json(parsedResponse.data);
     
   } catch (error) {
     console.error("Error en el registro:", error);

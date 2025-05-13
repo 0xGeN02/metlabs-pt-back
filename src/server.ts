@@ -8,6 +8,7 @@ import { POST as walletHandler } from "@api/wallet/route";
 import { POST as withdrawHandler } from "@api/wallet/withdraw/route";
 import { POST as depositHandler } from "@api/wallet/deposit/route";
 import { GET as userHandler } from "@api/user/[id]/route";
+import { GET as jwtHandler } from "@api/user/jwt/route";
 const app = express();
 const port = process.env.PORT || 3010;
 
@@ -41,7 +42,7 @@ app.post('/api/auth/register', (req: Request, res: Response) => {
   registerHandler(req, res);
 });
 
-app.post('/api/auth/sign-in/email', (req: Request, res: Response) => {
+app.post('/api/auth/login', (req: Request, res: Response) => {
   loginHandler(req, res);
 });
 
@@ -64,6 +65,12 @@ app.post('/api/wallet/deposit', (req: Request, res: Response) => {
 app.get('/api/user/:id', (req: Request, res: Response) => {
   userHandler(req, res);
 });
+
+// Register the JWT user route
+app.get('/api/user/jwt', (req: Request, res: Response) => {
+  jwtHandler(req, res);
+});
+
 
 app.all('/api/auth/{*any}', toNodeHandler(auth));
 

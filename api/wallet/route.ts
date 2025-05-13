@@ -11,6 +11,22 @@ const walletSchema = z.object({
   balance: z.number().optional(),
 });
 
+// Define el esquema para la respuesta de POST
+const postResponseSchema = z.object({
+  ok: z.boolean(),
+});
+
+// Define el esquema para la respuesta de GET
+const getResponseSchema = z.object({
+  public_key: z.string(),
+  balance: z.number(),
+  user: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string().email(),
+  }),
+});
+
 export async function POST(req: Request, res: Response) {
   try {
     // Valida el cuerpo de la solicitud
@@ -50,7 +66,7 @@ export async function POST(req: Request, res: Response) {
         }
       });
 
-      res.status(201).json({ ok: true });
+      res.status(201).json(postResponseSchema.parse({ ok: true }));
     } catch (err) {
       return res.status(401).json({ error: "Token inválido o malformado" });
     }
@@ -76,12 +92,12 @@ export async function GET(req: Request, res: Response) {
       // Obtén la wallet asociada al usuario
       const wallet = await prisma.wallet.findUnique({
         where: { userId },
-        include: { user: true }, // Incluye los datos del usuario asociado
+        include: { user: true },
       });
 
       if (!wallet) return res.status(404).json({ error: "Wallet no encontrada" });
 
-      res.status(200).json(wallet);
+      res.status(200).json(getResponseSchema.parse(wallet));
     } catch (err) {
       return res.status(401).json({ error: "Token inválido o malformado" });
     }

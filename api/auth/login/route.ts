@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
-// Esquema de validación
 const loginSchema = z.object({
   email: z.string().email("Correo electrónico inválido"),
   password: z
@@ -15,6 +14,16 @@ const loginSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/,
       "La contraseña debe contener mayúscula, minúscula, número y un caracter especial"
     ),
+});
+
+// Define el esquema para la respuesta
+const responseSchema = z.object({
+  message: z.string(),
+  success: z.boolean(),
+  user: z.object({
+    email: z.string().email(),
+    token: z.string(),
+  }),
 });
 
 export async function POST(req: Request, res: Response) {
@@ -88,14 +97,24 @@ export async function POST(req: Request, res: Response) {
         error: "Error al actualizar el token en la base de datos",
       });
     }
-    return res.status(201).json({
+
+    const response = {
       message: "Inicio de sesión exitoso",
       success: true,
       user: {
         email,
-        token
+        token,
       },
-    });
+    };
+
+    const parsedResponse = responseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      console.error("Formato de respuesta inválido:", parsedResponse.error);
+      return res.status(500).json({ error: "Formato de respuesta inválido" });
+    }
+
+    return res.status(201).json(parsedResponse.data);
   } catch (error) {
     console.error("Error en el login:", error);
     return res.status(500).json({

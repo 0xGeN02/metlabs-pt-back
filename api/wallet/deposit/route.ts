@@ -11,6 +11,12 @@ const depositSchema = z.object({
   amount: z.number().positive(),
 });
 
+// Define the schema for the success response
+const depositResponseSchema = z.object({
+  message: z.string(),
+  transactionHash: z.string(),
+});
+
 interface DepositRequestBody {
   userId: string;
   amount: number;
@@ -56,12 +62,18 @@ export async function POST(
     if (!tx) {
       return res.status(500).json({ error: "Transaction failed" });
     }
-    
-    // Respond with success
-    return res.status(200).json({
-      message: "Deposit successful",
+
+    const message = `Deposit of ${amount} ETH successful`;
+    const response = {
+      message: message,
       transactionHash: tx.hash,
-    });
+    };
+
+    const pasedSchema = depositResponseSchema.safeParse(response);
+    if(!pasedSchema.success) {
+      return res.status(500).json({ error: "Invalid response format" });
+    }
+    res.status(200).json(response);
   } catch (error) {
     console.error("Error processing deposit:", error);
 
