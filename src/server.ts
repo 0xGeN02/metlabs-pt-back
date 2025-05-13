@@ -11,13 +11,16 @@ import { GET as userHandler } from "@api/user/[id]/route";
 import { GET as jwtHandler } from "@api/user/jwt/route";
 const app = express();
 const port = process.env.PORT || 3010;
+const appURL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
 // Configure CORS first
 app.use(
   cors({
-    origin: process.env.NEXT_APP_URL,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: appURL,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -33,8 +36,6 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-// Mount express.json middleware AFTER Better Auth handler
-// Only for routes that don't interact with Better Auth
 app.use(express.json());
 
 // Registration endpoint
