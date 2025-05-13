@@ -17,20 +17,25 @@ const registerSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/,
       "La contraseña debe contener mayúscula, minúscula, número y un caracter especial"
     ),
-  confirmPassword: z.string(),
   phone: z.coerce.string().min(9, "El teléfono es obligatorio"),
   nationality: z.coerce.string().min(2, "La nacionalidad es obligatoria"),
   sex: z.enum(["male", "female"], { required_error: "El sexo es obligatorio" }),
   birth_date: z.string().refine((date) => {
-    const d = new Date(date);
-    const today = new Date();
-    const age = today.getFullYear() - d.getFullYear();
-    return !isNaN(d.getTime()) && age >= 18;
-  }, "Debes tener al menos 18 años para registrarte"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Las contraseñas no coinciden",
-  path: ["confirmPassword"],
-});
+      const d = new Date(date);
+      const today = new Date();
+
+      if (isNaN(d.getTime())) {
+        return false; // Fecha inválida
+      }
+
+      const age = today.getFullYear() - d.getFullYear();
+      const hasBirthdayPassed =
+        today.getMonth() > d.getMonth() ||
+        (today.getMonth() === d.getMonth() && today.getDate() >= d.getDate());
+
+      return age > 18 || (age === 18 && hasBirthdayPassed);
+    }, "Debes tener al menos 18 años para registrarte"),
+})
 
 // Define el esquema para la respuesta
 const responseSchema = z.object({
@@ -42,8 +47,7 @@ const responseSchema = z.object({
     phone: z.string(),
     nationality: z.string(),
     sex: z.enum(["male", "female"], { required_error: "El sexo es obligatorio" }),
-    birth_date: z.string(),
-    token: z.string(),
+    birth_date: z.any(),
   }),
 });
 
@@ -87,7 +91,7 @@ export async function POST(req: Request, res: Response) {
         phone,
         nationality,
         sex,
-        birth_date,
+        birth_date: new Date(birth_date),
       }
     });
 
