@@ -7,8 +7,7 @@ const prisma = new PrismaClient();
 
 // Define a schema for request validation
 const depositSchema = z.object({
-  userId: z.string(),
-  amount: z.number().positive(),
+  userId: z.string().nonempty("User ID is required"),
 });
 
 // Define the schema for the success response
@@ -37,7 +36,7 @@ export async function POST(
 ) {
   try {
     // Parse and validate the request body
-    const { userId, amount } = depositSchema.parse(req.body);
+    const { userId} = depositSchema.parse(req.body);
 
     // Check if the user exists
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -63,7 +62,7 @@ export async function POST(
       return res.status(500).json({ error: "Transaction failed" });
     }
 
-    const message = `Deposit of ${amount} ETH successful`;
+    const message = `Deposit of ETH successful`;
     const response = {
       message: message,
       transactionHash: tx.hash,

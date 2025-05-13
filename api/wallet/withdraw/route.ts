@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prismadb/generated/client";
 import { getContract, getSigner, getWallet } from "@lib/contract";
 import { Request, Response } from "express";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,9 @@ interface WithdrawRequestBody {
   userId: string;
 }
 
+const withdrawnSchema = z.object({
+  userId: z.string().nonempty("User ID is required"),
+})
 interface WithdrawSuccessResponse {
   message: string;
   transactionHash: string;
@@ -22,7 +26,11 @@ export async function POST(
   res: Response<WithdrawSuccessResponse | ErrorResponse>
 ) {
   try {
-    const { userId } = req.body;
+    const parsedBody = withdrawnSchema.safeParse(req.body);
+    if(!parsedBody.success) {
+      return res.status(400).json({ error: parsedBody.error.format() });
+    }
+    const { userId } = parsedBody.data;
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
@@ -53,7 +61,7 @@ export async function POST(
         return res.status(500).json({ error: "Transaction failed" });
     }
 
-    return res.status(200).json({ message: "Withdrawal successful", transactionHash: tx.hash });
+    return res.status(200).json({ message: `ETH was withdrawn successfully`, transactionHash: tx.hash });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error" });
