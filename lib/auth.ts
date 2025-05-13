@@ -1,7 +1,7 @@
 // filepath: /home/xgen0/metlabs-pt/metlabs-pt-back/lib/auth.ts
 // Configuración de autenticación con Better Auth
 import { betterAuth } from "better-auth";
-import { PrismaClient } from "../prisma/generated/client";
+import { PrismaClient } from "@prismadb/generated/client";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 // Inicializar el cliente Prisma
@@ -23,7 +23,7 @@ export const auth = betterAuth({
       prompt: "select_account+consent",
       clientId:     process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirectUri: `${process.env.NEXT_APP_URL}/api/auth/callback/google`,
+      redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`,
     },
   },
 

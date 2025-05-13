@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { PrismaClient } from "../../../prisma/generated/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt';
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
-import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 // Esquema de validación

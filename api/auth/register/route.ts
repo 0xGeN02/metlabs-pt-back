@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { PrismaClient } from "../../../prisma/generated/client";
+import { PrismaClient } from "@prismadb/generated/client";
 import bcrypt from "bcrypt";
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
 

@@ -31,6 +31,7 @@
     "better-auth": "^1.2.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "ethers": "^6.14.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "next-zod-route": "^0.2.5",
@@ -38,6 +39,7 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
+    "@typechain/ethers-v6": "^0.5.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
@@ -45,6 +47,7 @@
     "@types/node": "^22.15.17",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
     "typescript": "^5.8.3"
   }
 }

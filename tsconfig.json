@@ -5,10 +5,13 @@
     "paths": {
       "@/*": ["src/*"],
       "@lib/*": ["lib/*"],
-      "@tests/*": ["tests/*"]
+      "@tests/*": ["tests/*"],
+      "@utils/*": ["utils/*"],
+      "@prismadb/*" : ["prisma/*"],
     },
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "resolveJsonModule": true
   }
 }
