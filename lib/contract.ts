@@ -1,24 +1,19 @@
 import { ethers } from "ethers";
-import { z } from "zod";
 import { SmartContractPruebaTecnicaAbi__factory } from "types/factories/SmartContractPruebaTecnicaAbi__factory";
 import { SmartContractPruebaTecnicaAbi } from '../types/SmartContractPruebaTecnicaAbi';
 
-// Define a schema for environment variables
-const envSchema = z.object({
-  ALCHEMY_API_URL: z.string().url(),
-  ALCHEMY_SEPOLIA_API_KEY: z.string(),
-  CONTRACT_ADDRESS: z.string(),
-  WALLET_PRIVATE_KEY: z.string(),
-});
+const network: ethers.Networkish = "sepolia"; // Use a valid Ethereum network name
+const alchemyApiKey = process.env.ALCHEMY_SEPOLIA_API_KEY;
+if (!alchemyApiKey) throw new Error("Alchemy API key is not defined");
 
-// Parse and validate environment variables
-const env = envSchema.parse(process.env);
+const providerURL = `https://eth-sepolia.alchemyapi.io/v2/${alchemyApiKey}`; // Construct the provider URL using the API key
+if (!providerURL) throw new Error("Provider URL is not defined");
 
-const providerURL = env.ALCHEMY_API_URL;
-const network: ethers.Networkish = env.ALCHEMY_SEPOLIA_API_KEY;
-const contractAddress = env.CONTRACT_ADDRESS;
-const privateKey = env.WALLET_PRIVATE_KEY;
+const contractAddress = process.env.CONTRACT_ADDRESS;
+if (!contractAddress) throw new Error("Contract address is not defined");
 
+const privateKey = process.env.WALLET_PRIVATE_KEY;
+if (!privateKey) throw new Error("Private key is not defined");
 const providerOptions: ethers.JsonRpcApiProviderOptions = {
     polling: true,
     pollingInterval: 10000,

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prismadb/generated/client";
 import { getContract, getSigner, getWallet } from "@lib/contract";
 import { Request, Response } from "express";
 

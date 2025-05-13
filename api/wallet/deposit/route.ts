@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prismadb/generated/client";
 import { getContract, getSigner } from "@lib/contract";
 import { Request, Response } from "express";
 
