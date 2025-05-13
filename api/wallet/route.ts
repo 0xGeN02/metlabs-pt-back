@@ -56,14 +56,20 @@ export async function POST(req: Request, res: Response) {
         data: { walletId: address },
       });
 
-      // Crea la wallet si no existe
-      await prisma.wallet.create({
-        data: {
-          public_key: address,
-          userId: userId,
-        }
+      //Revisa si existe la wallet
+      const existingWallet = await prisma.wallet.findUnique({
+        where: { public_key: address },
       });
+      if (!existingWallet) {
 
+        // Crea la wallet si no existe
+        await prisma.wallet.create({
+          data: {
+            public_key: address,
+            userId: userId,
+          }
+        });
+      }
       res.status(201).json(postResponseSchema.parse({ ok: true }));
     } catch (err) {
       return res.status(401).json({ error: "Error in request" });
