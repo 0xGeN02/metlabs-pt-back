@@ -61,7 +61,6 @@ export async function POST(req: Request, res: Response) {
         where: { public_key: address },
       });
       if (!existingWallet) {
-
         // Crea la wallet si no existe
         await prisma.wallet.create({
           data: {
