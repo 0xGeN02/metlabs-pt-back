@@ -20,14 +20,19 @@ const loginSchema = z.object({
 export async function POST(req: Request, res: Response) {
   try {
     const body = req.body;
+    // Agregar logs para depuración
+    console.log("Datos recibidos en el cuerpo:", body);
     const validation = loginSchema.safeParse(body);
 
     if (!validation.success) {
+      console.error("Error de validación:", validation.error.format());
       return res.status(400).json({
         error: "Datos de inicio de sesión inválidos",
         details: validation.error.format(),
       });
     }
+
+    console.log("Datos validados correctamente:", validation.data);
 
     const { email, password } = validation.data;
 
@@ -36,6 +41,7 @@ export async function POST(req: Request, res: Response) {
       where: { email },
     });
     if (!user) {
+      console.error("Usuario no encontrado para el correo:", email);
       return res.status(401).json({
         error: "Usuario o contraseña incorrectos",
       });
@@ -44,19 +50,26 @@ export async function POST(req: Request, res: Response) {
     // Verificar la contraseña
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.error("Contraseña incorrecta para el usuario:", email);
       return res.status(401).json({
         error: "Contraseña incorrecta",
       });
     }
+
+    console.log("Usuario autenticado correctamente:", user);
+
     //  Generar un token JWT y enviarlo al cliente
     const jwtSecret = process.env.JWT_SECRET as Secret;
     const jwtExpiration = process.env.JWT_EXPIRATION as SignOptions['expiresIn'] || '1h';
 
     if (!jwtSecret) {
-    return res.status(500).json({
+      console.error("JWT_SECRET no está definido en las variables de entorno");
+      return res.status(500).json({
         error: 'Error interno del servidor: JWT_SECRET no está definido'
-    });
+      });
     }
+
+    console.log("Generando token JWT para el usuario:", user.id);
 
     const payload = { userId: user.id, email: user.email };
     const options: SignOptions = { expiresIn: jwtExpiration };
@@ -68,17 +81,20 @@ export async function POST(req: Request, res: Response) {
         where: { id: user.id },
         data: { jwt: token },
       });
+      console.log("Token actualizado en la base de datos para el usuario:", user.id);
     } catch (error) {
+      console.error("Error al actualizar el token en la base de datos:", error);
       return res.status(500).json({
         error: "Error al actualizar el token en la base de datos",
       });
     }
-    return res.status(200).json({
+    return res.status(201).json({
       message: "Inicio de sesión exitoso",
-        user: {
-            email,
-            token
-        },
+      success: true,
+      user: {
+        email,
+        token
+      },
     });
   } catch (error) {
     console.error("Error en el login:", error);

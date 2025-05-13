@@ -30,7 +30,7 @@ model User {
     updated_at DateTime @updatedAt
     deleted_at DateTime? @db.Date
 
-    wallet Wallet?
+    wallet Wallet[]
 }
 
 model Verification {
@@ -45,10 +45,11 @@ model Verification {
 model Wallet {
     public_key  String @unique @id @default(cuid())
     balance     Float  @default(0)
-
+    userId      String? @unique
+    
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
     deleted_at DateTime? @db.Date
 
-    user User? @relation(fields: [public_key], references: [walletId])
+    user User? @relation(fields: [userId], references: [id])
 }

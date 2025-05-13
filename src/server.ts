@@ -20,6 +20,18 @@ app.use(
   })
 );
 
+// Middleware para registrar solicitudes y respuestas
+app.use((req: Request, res: Response, next) => {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} - ${res.statusCode} (${duration}ms)`);
+  });
+
+  next();
+});
+
 // Mount express.json middleware AFTER Better Auth handler
 // Only for routes that don't interact with Better Auth
 app.use(express.json());
