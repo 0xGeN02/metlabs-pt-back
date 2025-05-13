@@ -5,7 +5,7 @@ import { auth } from "@lib/auth";
 import { POST as registerHandler } from "@api/auth/register/route";
 import { POST as loginHandler } from "@api/auth/login/route";
 import { POST as walletHandler } from "@api/wallet/route";
-import { POST as withdrawHandler } from "@api/wallet/withdrown/route";
+import { POST as withdrawHandler } from "@api/wallet/withdraw/route";
 import { POST as depositHandler } from "@api/wallet/deposit/route";
 import { GET as userHandler } from "@api/user/[id]/route";
 const app = express();
