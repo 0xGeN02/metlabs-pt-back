@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 // Define a schema for request validation
 const depositSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string(),
   amount: z.number().positive(),
 });
 

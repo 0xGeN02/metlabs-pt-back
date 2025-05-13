@@ -3,16 +3,16 @@ import { SmartContractPruebaTecnicaAbi__factory } from "types/factories/SmartCon
 import { SmartContractPruebaTecnicaAbi } from '../types/SmartContractPruebaTecnicaAbi';
 
 const network: ethers.Networkish = "sepolia"; // Use a valid Ethereum network name
-const alchemyApiKey = process.env.ALCHEMY_SEPOLIA_API_KEY;
+const alchemyApiKey = process.env.ALCHEMY_SEPOLIA_API_KEY as string;
 if (!alchemyApiKey) throw new Error("Alchemy API key is not defined");
 
-const providerURL = `https://eth-sepolia.alchemyapi.io/v2/${alchemyApiKey}`; // Construct the provider URL using the API key
+const providerURL = process.env.ALCHEMY_API_URL as string;
 if (!providerURL) throw new Error("Provider URL is not defined");
 
-const contractAddress = process.env.CONTRACT_ADDRESS;
+const contractAddress = process.env.CONTRACT_ADDRESS as string;
 if (!contractAddress) throw new Error("Contract address is not defined");
 
-const privateKey = process.env.WALLET_PRIVATE_KEY;
+const privateKey = process.env.WALLET_PRIVATE_KEY as string;
 if (!privateKey) throw new Error("Private key is not defined");
 const providerOptions: ethers.JsonRpcApiProviderOptions = {
     polling: true,
