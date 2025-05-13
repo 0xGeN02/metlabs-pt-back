@@ -2,10 +2,10 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { toNodeHandler, fromNodeHeaders  } from "better-auth/node";
-import { auth } from "../lib/auth";
-import { POST as registerHandler } from "../api/auth/register/route";
-import { POST as loginHandler } from "../api/auth/login/route";
-import { POST as walletHandler } from "../api/user/wallet/route";
+import { auth } from "@lib/auth";
+import { POST as registerHandler } from "@api/auth/register/route";
+import { POST as loginHandler } from "@api/auth/login/route";
+import { POST as walletHandler } from "@api/wallet/route";
 const app = express();
 const port = process.env.PORT || 3010;
 
