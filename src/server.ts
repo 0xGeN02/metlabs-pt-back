@@ -64,8 +64,8 @@ app.post('/api/wallet/deposit', (req: Request, res: Response) => {
   depositHandler(req, res);
 });
 
-// Register the deposit route
-app.post('/api/wallet/:userId', (req: Request, res: Response) => {
+// Register the wallet route
+app.get('/api/wallet/:userId', (req: Request, res: Response) => {
   walletUserIdHandler(req, res);
 });
 
