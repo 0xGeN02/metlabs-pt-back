@@ -20,12 +20,6 @@ const responseSchema = z.object({
   sex: z.string(),
   nationality: z.string(),
   birth_date: z.string(),
-  wallet: z.array(
-    z.object({
-      public_key: z.string(),
-      balance: z.number(),
-    })
-  ),
 });
 
 export async function GET(req: Request, res: Response) {
@@ -44,9 +38,6 @@ export async function GET(req: Request, res: Response) {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: {
-        wallet: true,
-      },
     });
 
     if (!user) {
