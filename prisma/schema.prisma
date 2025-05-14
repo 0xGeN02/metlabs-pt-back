@@ -31,6 +31,7 @@ model User {
     deleted_at DateTime? @db.Date
 
     wallet Wallet[]
+    passwordReset passwordReset[]
 }
 
 model Verification {
@@ -52,4 +53,14 @@ model Wallet {
     deleted_at DateTime? @db.Date
 
     user User? @relation(fields: [userId], references: [id])
+}
+
+model passwordReset {
+  id         String   @id @default(uuid())
+  token      String
+  expires  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
 }

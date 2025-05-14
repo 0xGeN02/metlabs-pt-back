@@ -10,6 +10,7 @@ import { POST as depositHandler } from "@api/wallet/deposit/route";
 import { GET as userHandler } from "@api/user/[id]/route";
 import { GET as jwtHandler } from "@api/user/jwt/route";
 import { GET as walletUserIdHandler } from "@api/wallet/[userId]/route";
+import { forgotPasswordHandler } from "@api/auth/forgot-password/route";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -47,6 +48,10 @@ app.post('/api/auth/register', (req: Request, res: Response) => {
 
 app.post('/api/auth/login', (req: Request, res: Response) => {
   loginHandler(req, res);
+});
+
+app.post('/api/auth/forgot-password', (req: Request, res: Response) => {
+  forgotPasswordHandler(req, res);
 });
 
 // Register the wallet route

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",
+    "@react-email/components": "^0.0.41",
     "bcrypt": "^6.0.0",
     "better-auth": "^1.2.7",
     "cors": "^2.8.5",
@@ -36,6 +37,8 @@
     "jsonwebtoken": "^9.0.2",
     "next-zod-route": "^0.2.5",
     "prisma": "^6.7.0",
+    "react-email": "^4.0.13",
+    "resend": "^4.5.1",
     "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.4"
   },
@@ -46,6 +49,7 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.17",
+    "@types/react": "^19.1.4",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",

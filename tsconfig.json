@@ -9,10 +9,12 @@
       "@tests/*": ["tests/*"],
       "@utils/*": ["utils/*"],
       "@prismadb/*" : ["prisma/*"],
+      "@email/*": ["email/*"],
     },
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "jsx": "react"
   }
 }
