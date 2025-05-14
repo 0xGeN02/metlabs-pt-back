@@ -9,6 +9,8 @@ import { POST as withdrawHandler } from "@api/wallet/withdraw/route";
 import { POST as depositHandler } from "@api/wallet/deposit/route";
 import { GET as userHandler } from "@api/user/[id]/route";
 import { GET as jwtHandler } from "@api/user/jwt/route";
+import { GET as walletUserIdHandler } from "@api/wallet/[userId]/route";
+
 const app = express();
 const port = process.env.PORT || 3000;
 const appURL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002';
@@ -60,6 +62,11 @@ app.post('/api/wallet/withdraw', (req: Request, res: Response) => {
 // Register the deposit route
 app.post('/api/wallet/deposit', (req: Request, res: Response) => {
   depositHandler(req, res);
+});
+
+// Register the deposit route
+app.post('/api/wallet/:userId', (req: Request, res: Response) => {
+  walletUserIdHandler(req, res);
 });
 
 // Register the user route

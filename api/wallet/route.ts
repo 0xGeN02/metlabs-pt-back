@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prismadb/generated/client";
-import jwt from "jsonwebtoken";
 import { z } from "zod";
 
 const prisma = new PrismaClient();
@@ -79,44 +78,4 @@ export async function POST(req: Request, res: Response) {
   }
 }
 
-export async function GET(req: Request, res: Response) {
-  try {
-    // Obtenemos el jwt del request
-    const parseBody = reqSchema.safeParse(req.body);
-    if (!parseBody.success) {
-      return res.status(400).json({
-        error: "Datos inválidos",
-        details: parseBody.error.errors,
-      });
-    }
-    const { userId } = parseBody.data;
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-    if (!user) return res.status(401).json({ error: "No autenticado" });
-
-    try {
-
-      const userId = user?.id;
-      if (!userId) return res.status(401).json({ error: "No autenticado." });
-
-      if (!userId) return res.status(400).json({ error: "Usuario no encontrado" });
-
-      // Obtén la wallet asociada al usuario
-      const wallet = await prisma.wallet.findUnique({
-        where: { userId },
-        include: { user: true },
-      });
-
-      if (!wallet) return res.status(404).json({ error: "Wallet no encontrada" });
-
-      res.status(200).json(getResponseSchema.parse(wallet));
-    } catch (err) {
-      return res.status(401).json({ error: "Token inválido o malformado" });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-}
 
